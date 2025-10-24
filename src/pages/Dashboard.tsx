@@ -233,7 +233,7 @@ export default function Dashboard() {
       </Card>
 
       {/* Volume Analysis */}
-      <Card>
+      <Card className="-mt-2">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
