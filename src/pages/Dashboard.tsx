@@ -1,9 +1,32 @@
+"use client"; // Added "use client" as Recharts components are interactive
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, Legend, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ComposedChart } from "recharts";
-import { TrendingUp, TrendingDown, BarChart3, PieChart as PieChartIcon, Activity, TrendingUpIcon } from "lucide-react";
+import { 
+  LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, 
+  CartesianGrid, Legend, BarChart, Bar, AreaChart, Area, 
+  PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, 
+  PolarRadiusAxis, Radar, ComposedChart 
+} from "recharts";
+import { TrendingUp, TrendingDown, BarChart3, PieChart as PieChartIcon, Activity } from "lucide-react";
 
+// --- Change: Centralized color definitions for easier maintenance ---
+const commodityColors = {
+  mustard: "hsl(var(--primary))",
+  soybean: "hsl(var(--chart-neutral))",
+  groundnut: "hsl(var(--chart-gain))",
+  sunflower: "hsl(var(--accent))",
+  high: "hsl(var(--chart-gain))",
+  low: "hsl(var(--destructive))",
+  avg: "hsl(var(--primary))",
+  transactions: "hsl(var(--primary))",
+  volume: "hsl(var(--chart-gain))",
+  volatility: "hsl(var(--destructive))",
+  performance: "hsl(var(--primary))"
+};
+
+// --- Data (Original) ---
 const commodities = [
   { 
     name: "Mustard", 
@@ -35,14 +58,39 @@ const commodities = [
   },
 ];
 
+// --- Spot prices (with more random, spiky variations) ---
 const spotData = [
-  { date: "Jan 1", mustard: 5500, soybean: 4300, groundnut: 5900, sunflower: 6900 },
-  { date: "Jan 8", mustard: 5520, soybean: 4280, groundnut: 5950, sunflower: 6880 },
-  { date: "Jan 15", mustard: 5480, soybean: 4320, groundnut: 6000, sunflower: 6870 },
-  { date: "Jan 22", mustard: 5600, soybean: 4290, groundnut: 6080, sunflower: 6860 },
-  { date: "Jan 29", mustard: 5580, soybean: 4300, groundnut: 6100, sunflower: 6840 },
-  { date: "Feb 5", mustard: 5650, soybean: 4280, groundnut: 6120, sunflower: 6850 },
+  { date: "Jan 1", mustard: 5500, soybean: 4200, groundnut: 6000, sunflower: 6900 },
+  { date: "Jan 2", mustard: 5560, soybean: 4190, groundnut: 6080, sunflower: 6920 },
+  { date: "Jan 3", mustard: 5520, soybean: 4210, groundnut: 6030, sunflower: 6960 },
+  { date: "Jan 4", mustard: 5630, soybean: 4180, groundnut: 6120, sunflower: 7000 },
+  { date: "Jan 5", mustard: 5690, soybean: 4155, groundnut: 6060, sunflower: 6940 },
+  { date: "Jan 6", mustard: 5740, soybean: 4130, groundnut: 6130, sunflower: 7020 },
+  { date: "Jan 7", mustard: 5660, soybean: 4170, groundnut: 6100, sunflower: 6980 },
+  { date: "Jan 8", mustard: 5790, soybean: 4120, groundnut: 6190, sunflower: 7070 },
+  { date: "Jan 9", mustard: 5850, soybean: 4090, groundnut: 6250, sunflower: 7050 },
+  { date: "Jan 10", mustard: 5780, soybean: 4140, groundnut: 6160, sunflower: 7090 },
+  { date: "Jan 11", mustard: 5920, soybean: 4110, groundnut: 6300, sunflower: 7130 },
+  { date: "Jan 12", mustard: 5960, soybean: 4090, groundnut: 6280, sunflower: 7100 },
+  { date: "Jan 13", mustard: 5890, soybean: 4100, groundnut: 6330, sunflower: 7160 },
+  { date: "Jan 14", mustard: 6030, soybean: 4060, groundnut: 6370, sunflower: 7190 },
+  { date: "Jan 15", mustard: 6080, soybean: 4040, groundnut: 6420, sunflower: 7220 },
+  { date: "Jan 16", mustard: 6000, soybean: 4065, groundnut: 6340, sunflower: 7170 },
+  { date: "Jan 17", mustard: 6120, soybean: 4010, groundnut: 6460, sunflower: 7240 },
+  { date: "Jan 18", mustard: 6180, soybean: 3985, groundnut: 6520, sunflower: 7300 },
+  { date: "Jan 19", mustard: 6100, soybean: 4020, groundnut: 6440, sunflower: 7280 },
+  { date: "Jan 20", mustard: 6220, soybean: 3970, groundnut: 6550, sunflower: 7350 },
+  { date: "Jan 21", mustard: 6280, soybean: 3945, groundnut: 6610, sunflower: 7420 },
+  { date: "Jan 22", mustard: 6200, soybean: 3980, groundnut: 6530, sunflower: 7390 },
+  { date: "Jan 23", mustard: 6330, soybean: 3930, groundnut: 6660, sunflower: 7460 },
+  { date: "Jan 24", mustard: 6400, soybean: 3890, groundnut: 6720, sunflower: 7510 },
+  { date: "Jan 25", mustard: 6520, soybean: 3870, groundnut: 6770, sunflower: 7530 },
 ];
+
+
+// --- Futures prices (stronger spikes, trend more visible) ---
+
+
 
 const volumeData = [
   { date: "Jan 1", mustard: 1200, soybean: 2100, groundnut: 850, sunflower: 950 },
@@ -60,11 +108,12 @@ const volatilityData = [
   { commodity: "Sunflower", volatility: 1.9, avgPrice: 6867, priceRange: 60 },
 ];
 
+// --- Change: Added fill colors directly from our color object ---
 const marketShareData = [
-  { name: "Soybean", value: 42, fill: "hsl(var(--chart-neutral))" },
-  { name: "Mustard", value: 28, fill: "hsl(var(--primary))" },
-  { name: "Groundnut", value: 18, fill: "hsl(var(--chart-gain))" },
-  { name: "Sunflower", value: 12, fill: "hsl(var(--accent))" },
+  { name: "Soybean", value: 42, fill: commodityColors.soybean },
+  { name: "Mustard", value: 28, fill: commodityColors.mustard },
+  { name: "Groundnut", value: 18, fill: commodityColors.groundnut },
+  { name: "Sunflower", value: 12, fill: commodityColors.sunflower },
 ];
 
 const priceSpreadData = [
@@ -93,12 +142,78 @@ const performanceMetrics = [
 ];
 
 const futuresData = [
-  { date: "Feb 12", mustard: 5720, soybean: 4350, groundnut: 6200, sunflower: 6920 },
-  { date: "Feb 19", mustard: 5780, soybean: 4380, groundnut: 6250, sunflower: 6950 },
-  { date: "Feb 26", mustard: 5850, soybean: 4420, groundnut: 6320, sunflower: 7000 },
-  { date: "Mar 5", mustard: 5920, soybean: 4450, groundnut: 6380, sunflower: 7050 },
-  { date: "Mar 12", mustard: 6000, soybean: 4500, groundnut: 6450, sunflower: 7100 },
+  { date: "Feb 1", mustard: 6400, soybean: 3920, groundnut: 6600, sunflower: 7350 },
+  { date: "Feb 2", mustard: 6480, soybean: 3895, groundnut: 6690, sunflower: 7390 },
+  { date: "Feb 3", mustard: 6430, soybean: 3950, groundnut: 6620, sunflower: 7340 },
+  { date: "Feb 4", mustard: 6530, soybean: 3880, groundnut: 6720, sunflower: 7420 },
+  { date: "Feb 5", mustard: 6580, soybean: 3860, groundnut: 6760, sunflower: 7450 },
+  { date: "Feb 6", mustard: 6500, soybean: 3880, groundnut: 6690, sunflower: 7420 },
+  { date: "Feb 7", mustard: 6630, soybean: 3850, groundnut: 6820, sunflower: 7480 },
+  { date: "Feb 8", mustard: 6700, soybean: 3830, groundnut: 6900, sunflower: 7530 },
+  { date: "Feb 9", mustard: 6650, soybean: 3845, groundnut: 6850, sunflower: 7510 },
+  { date: "Feb 10", mustard: 6750, soybean: 3810, groundnut: 6930, sunflower: 7560 },
+  { date: "Feb 11", mustard: 6820, soybean: 3790, groundnut: 6980, sunflower: 7600 },
+  { date: "Feb 12", mustard: 6760, soybean: 3820, groundnut: 6920, sunflower: 7570 },
+  { date: "Feb 13", mustard: 6890, soybean: 3770, groundnut: 7050, sunflower: 7650 },
+  { date: "Feb 14", mustard: 6970, soybean: 3750, groundnut: 7100, sunflower: 7700 },
+  { date: "Feb 15", mustard: 6920, soybean: 3760, groundnut: 7040, sunflower: 7670 },
+  { date: "Feb 16", mustard: 7050, soybean: 3730, groundnut: 7160, sunflower: 7730 },
+  { date: "Feb 17", mustard: 7130, soybean: 3700, groundnut: 7230, sunflower: 7790 },
+  { date: "Feb 18", mustard: 7070, soybean: 3720, groundnut: 7180, sunflower: 7760 },
+  { date: "Feb 19", mustard: 7190, soybean: 3680, groundnut: 7290, sunflower: 7810 },
+  { date: "Feb 20", mustard: 7250, soybean: 3660, groundnut: 7350, sunflower: 7870 },
+  { date: "Feb 21", mustard: 7180, soybean: 3680, groundnut: 7280, sunflower: 7830 },
+  { date: "Feb 22", mustard: 7300, soybean: 3640, groundnut: 7400, sunflower: 7910 },
+  { date: "Feb 23", mustard: 7400, soybean: 3620, groundnut: 7500, sunflower: 7960 },
+  { date: "Feb 24", mustard: 7350, soybean: 3650, groundnut: 7450, sunflower: 7940 },
+  { date: "Feb 25", mustard: 7450, soybean: 3600, groundnut: 7550, sunflower: 8010 },
 ];
+
+// --- Change: Added a new Custom Tooltip component ---
+// This component will be reused by all charts for a consistent look
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-lg border bg-card p-2 shadow-sm text-card-foreground">
+        <p className="font-bold text-sm">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={`item-${index}`} className="text-xs flex justify-between gap-4" style={{ color: entry.color }}>
+            <span>{entry.name}:</span>
+            <span className="font-medium">
+              {entry.value.toLocaleString('en-IN')}
+              {/* Suffix for specific tooltips, e.g., '%' or 'quintals' */}
+              {entry.dataKey === 'volatility' || entry.name.includes('%') ? '%' : ''}
+              {entry.dataKey.includes('volume') && !label ? ' quintals' : ''}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+// --- Change: Added custom label for the Donut Chart ---
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.7; // Position label inside slice
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="white" // Assuming dark slices, change if needed
+      textAnchor={x > cx ? 'start' : 'end'}
+      dominantBaseline="central"
+      className="text-xs font-medium"
+    >
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+};
+
 
 export default function Dashboard() {
   return (
@@ -138,9 +253,13 @@ export default function Dashboard() {
                   <div className="h-16">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={chartData}>
+                        {/* --- Change: Added YAxis with domain to fix flat mini-charts --- */}
+                        <YAxis hide domain={['dataMin', 'dataMax']} />
+                        <Tooltip content={<CustomTooltip />} />
                         <Line 
                           type="monotone" 
                           dataKey="value" 
+                          name={commodity.name} // --- Change: Added name for tooltip
                           stroke={isPositive ? "hsl(var(--chart-gain))" : "hsl(var(--chart-loss))"} 
                           strokeWidth={2}
                           dot={false}
@@ -161,7 +280,8 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="spot" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 lg:w-auto">
+            {/* --- Change: Improved mobile responsiveness for tabs --- */}
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:w-auto">
               <TabsTrigger value="spot">Spot Prices</TabsTrigger>
               <TabsTrigger value="futures">Futures (Virtual)</TabsTrigger>
               <TabsTrigger value="forecast">Forecast</TabsTrigger>
@@ -173,19 +293,21 @@ export default function Dashboard() {
                 <LineChart data={spotData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "var(--radius)",
-                    }}
+                  {/* --- Change: Added domain to YAxis to fix flat lines --- */}
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))" 
+                    fontSize={12} 
+                    domain={['dataMin - 100', 'dataMax + 100']}
+                    tickFormatter={(value) => `₹${value.toLocaleString('en-IN')}`}
                   />
+                  {/* --- Change: Using new CustomTooltip --- */}
+                  <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Line type="monotone" dataKey="mustard" stroke="hsl(var(--primary))" strokeWidth={2} name="Mustard" />
-                  <Line type="monotone" dataKey="soybean" stroke="hsl(var(--chart-neutral))" strokeWidth={2} name="Soybean" />
-                  <Line type="monotone" dataKey="groundnut" stroke="hsl(var(--chart-gain))" strokeWidth={2} name="Groundnut" />
-                  <Line type="monotone" dataKey="sunflower" stroke="hsl(var(--accent))" strokeWidth={2} name="Sunflower" />
+                  {/* --- Change: Using colors from centralized object --- */}
+                  <Line type="monotone" dataKey="mustard" stroke={commodityColors.mustard} strokeWidth={2} name="Mustard" />
+                  <Line type="monotone" dataKey="soybean" stroke={commodityColors.soybean} strokeWidth={2} name="Soybean" />
+                  <Line type="monotone" dataKey="groundnut" stroke={commodityColors.groundnut} strokeWidth={2} name="Groundnut" />
+                  <Line type="monotone" dataKey="sunflower" stroke={commodityColors.sunflower} strokeWidth={2} name="Sunflower" />
                 </LineChart>
               </ResponsiveContainer>
             </TabsContent>
@@ -195,28 +317,34 @@ export default function Dashboard() {
                 <AreaChart data={futuresData}>
                   <defs>
                     <linearGradient id="colorMustard" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      <stop offset="5%" stopColor={commodityColors.mustard} stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor={commodityColors.mustard} stopOpacity={0}/>
                     </linearGradient>
                     <linearGradient id="colorSoybean" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--chart-neutral))" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(var(--chart-neutral))" stopOpacity={0}/>
+                      <stop offset="5%" stopColor={commodityColors.soybean} stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor={commodityColors.soybean} stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorGroundnut" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={commodityColors.groundnut} stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor={commodityColors.groundnut} stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "var(--radius)",
-                    }}
+                  {/* --- Change: Added domain to YAxis to fix flat lines --- */}
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))" 
+                    fontSize={12} 
+                    domain={['dataMin - 100', 'dataMax + 100']}
+                    tickFormatter={(value) => `₹${value.toLocaleString('en-IN')}`}
                   />
+                  {/* --- Change: Using new CustomTooltip --- */}
+                  <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Area type="monotone" dataKey="mustard" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorMustard)" name="Mustard" />
-                  <Area type="monotone" dataKey="soybean" stroke="hsl(var(--chart-neutral))" fillOpacity={1} fill="url(#colorSoybean)" name="Soybean" />
-                  <Area type="monotone" dataKey="groundnut" stroke="hsl(var(--chart-gain))" fillOpacity={0.2} fill="hsl(var(--chart-gain))" name="Groundnut" />
+                  <Area type="monotone" dataKey="mustard" stroke={commodityColors.mustard} fillOpacity={1} fill="url(#colorMustard)" name="Mustard" />
+                  <Area type="monotone" dataKey="soybean" stroke={commodityColors.soybean} fillOpacity={1} fill="url(#colorSoybean)" name="Soybean" />
+                  {/* --- Change: Added gradient and Area for Groundnut --- */}
+                  <Area type="monotone" dataKey="groundnut" stroke={commodityColors.groundnut} fillOpacity={1} fill="url(#colorGroundnut)" name="Groundnut" />
                 </AreaChart>
               </ResponsiveContainer>
             </TabsContent>
@@ -247,19 +375,17 @@ export default function Dashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              {/* --- Change: Using new CustomTooltip --- */}
               <Tooltip 
-                contentStyle={{
-                  backgroundColor: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "var(--radius)",
-                }}
-                formatter={(value: number) => `${value} quintals`}
+                content={<CustomTooltip />}
+                formatter={(value: number) => `${value.toLocaleString('en-IN')} quintals`}
               />
               <Legend />
-              <Bar dataKey="mustard" fill="hsl(var(--primary))" name="Mustard" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="soybean" fill="hsl(var(--chart-neutral))" name="Soybean" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="groundnut" fill="hsl(var(--chart-gain))" name="Groundnut" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="sunflower" fill="hsl(var(--accent))" name="Sunflower" radius={[4, 4, 0, 0]} />
+              {/* --- Change: Using colors from centralized object --- */}
+              <Bar dataKey="mustard" fill={commodityColors.mustard} name="Mustard" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="soybean" fill={commodityColors.soybean} name="Soybean" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="groundnut" fill={commodityColors.groundnut} name="Groundnut" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="sunflower" fill={commodityColors.sunflower} name="Sunflower" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -279,27 +405,27 @@ export default function Dashboard() {
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
+                {/* --- Change: Using new CustomTooltip --- */}
+                <Tooltip content={<CustomTooltip />} />
                 <Pie
                   data={marketShareData}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}%`}
-                  outerRadius={90}
+                  // --- Change: Using custom label and converted to Donut ---
+                  label={renderCustomizedLabel}
+                  innerRadius={60} // This makes it a donut chart
+                  outerRadius={100} // Adjusted outer radius
+                  paddingAngle={5}
                   dataKey="value"
+                  nameKey="name"
                 >
+                  {/* --- Change: Cell fill is now handled by the data object --- */}
                   {marketShareData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                    <Cell key={`cell-${index}`} fill={entry.fill} stroke={entry.fill} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "var(--radius)",
-                  }}
-                  formatter={(value: number) => `${value}%`}
-                />
+                <Legend />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -320,15 +446,9 @@ export default function Dashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <YAxis dataKey="commodity" type="category" stroke="hsl(var(--muted-foreground))" fontSize={12} width={80} />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "var(--radius)",
-                  }}
-                  formatter={(value: number) => `${value}%`}
-                />
-                <Bar dataKey="volatility" fill="hsl(var(--destructive))" radius={[0, 8, 8, 0]} />
+                {/* --- Change: Using new CustomTooltip --- */}
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="volatility" name="Volatility" fill={commodityColors.volatility} radius={[0, 8, 8, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -339,7 +459,7 @@ export default function Dashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUpIcon className="h-5 w-5" />
+            <TrendingUp className="h-5 w-5" /> {/* Replaced icon */}
             Weekly Price Spread Analysis
           </CardTitle>
           <CardDescription>High, Low, and Average prices across all commodities</CardDescription>
@@ -349,19 +469,18 @@ export default function Dashboard() {
             <ComposedChart data={priceSpreadData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "var(--radius)",
-                }}
-                formatter={(value: number) => `₹${value.toLocaleString('en-IN')}`}
+              <YAxis 
+                stroke="hsl(var(--muted-foreground))" 
+                fontSize={12} 
+                tickFormatter={(value) => `₹${value.toLocaleString('en-IN')}`}
               />
+              {/* --- Change: Using new CustomTooltip --- */}
+              <Tooltip content={<CustomTooltip />} />
               <Legend />
-              <Bar dataKey="high" fill="hsl(var(--chart-gain))" name="High Price" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="low" fill="hsl(var(--destructive))" name="Low Price" radius={[4, 4, 0, 0]} />
-              <Line type="monotone" dataKey="avg" stroke="hsl(var(--primary))" strokeWidth={3} name="Average" />
+              {/* --- Change: Using colors from centralized object --- */}
+              <Bar dataKey="high" fill={commodityColors.high} name="High Price" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="low" fill={commodityColors.low} name="Low Price" radius={[4, 4, 0, 0]} />
+              <Line type="monotone" dataKey="avg" stroke={commodityColors.avg} strokeWidth={3} name="Average" />
             </ComposedChart>
           </ResponsiveContainer>
         </CardContent>
@@ -385,16 +504,12 @@ export default function Dashboard() {
                 <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "var(--radius)",
-                  }}
-                />
+                {/* --- Change: Using new CustomTooltip --- */}
+                <Tooltip content={<CustomTooltip />} />
                 <Legend />
-                <Bar yAxisId="left" dataKey="transactions" fill="hsl(var(--primary))" name="Transactions" radius={[4, 4, 0, 0]} />
-                <Line yAxisId="right" type="monotone" dataKey="volume" stroke="hsl(var(--chart-gain))" strokeWidth={2} name="Volume" />
+                {/* --- Change: Using colors from centralized object --- */}
+                <Bar yAxisId="left" dataKey="transactions" fill={commodityColors.transactions} name="Transactions" radius={[4, 4, 0, 0]} />
+                <Line yAxisId="right" type="monotone" dataKey="volume" stroke={commodityColors.volume} strokeWidth={2} name="Volume" />
               </ComposedChart>
             </ResponsiveContainer>
           </CardContent>
@@ -415,14 +530,9 @@ export default function Dashboard() {
                 <PolarGrid stroke="hsl(var(--border))" />
                 <PolarAngleAxis dataKey="metric" stroke="hsl(var(--muted-foreground))" fontSize={11} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                <Radar name="Performance" dataKey="value" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.6} />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "var(--radius)",
-                  }}
-                />
+                {/* --- Change: Using new CustomTooltip --- */}
+                <Tooltip content={<CustomTooltip />} />
+                <Radar name="Performance" dataKey="value" stroke={commodityColors.performance} fill={commodityColors.performance} fillOpacity={0.6} />
               </RadarChart>
             </ResponsiveContainer>
           </CardContent>
